@@ -1,38 +1,63 @@
-import react, { Component } from 'react';
-import { Container, ListGroup, ListGroupItem, Button } from 'reactstrap';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import uuid from 'uuid';
+import React, {Component} from 'react';
+import {Container, ListGroup, ListGroupItem, Button} from 'reactstrap';
+import {CSSTransition, TransitionGroup} from 'react-transition-group';
+// import uuid from 'uuid/v4';
+import {v4 as uuidv4 } from 'uuid';
+//const uuid = require('uuid');
 
-class CoursesList extends Component {
+class CoursesList extends Component{
     state = {
-        items: [
-            { id: uuid(), name: 'CSI' },
-            { id: uuid(), name: 'SEG' },
-            { id: uuid(), name: 'GNG' },
-            { id: uuid(), name: 'MAT' }
+        items:[
+            {id: uuidv4(), name: 'CSI'},
+            {id: uuidv4(), name: 'SEG'},
+            {id: uuidv4(), name: 'GNG'},
+            {id: uuidv4(), name: 'MAT'}
         ]
     }
 
-    render() {
+    render(){
         const { items } = this.state;
-        return ( <
-            Container >
-            <
-            button color = "dark"
-            style = {
-                { marginBottom: '2rem' } }
-            onClick = {
-                () => {
+        return(
+            <Container>
+                <button 
+                className="main-btn"
+                style={{marginBottom: '2rem'}}
+                onClick={() => {
                     const name = prompt('Enter Course');
-                    if (name) {
+                    if (name){
                         this.setState(state => ({
-                            items: [...state.items, { id: uuid(), name }]
+                            items: [...state.items, { id: uuidv4(), name}]
                         }));
                     }
                 }
-            } >
-            Add Course < /button> <
-            /Container>
+                }
+                >
+                Add Course
+                </button>
+
+                <ListGroup>
+                    <TransitionGroup className="Courses-List">
+                        {items.map(({id, name}) => (
+                            <CSSTransition key = {id} timeout={500} classNames="fade">
+                                <ListGroupItem>
+                                    <Button 
+                                    className="remove-btn"
+                                    color="danger"
+                                    size="sm"
+                                    onClick= {() => {
+                                        this.setState(state => ({
+                                            items: state.items.filter(item => item.id !== id)
+                                        }));
+                                    }}
+                                    > &times;</Button>
+                                    {name}
+                                </ListGroupItem>
+                            </CSSTransition>
+                        ) )}
+                    </TransitionGroup>
+                </ListGroup>    
+
+            </Container>
         );
     }
 }
