@@ -1,40 +1,26 @@
 import React, {Component} from 'react';
 import {Container, ListGroup, ListGroupItem, Button} from 'reactstrap';
 import {CSSTransition, TransitionGroup} from 'react-transition-group';
-// import uuid from 'uuid/v4';
-import {v4 as uuidv4 } from 'uuid';
-//const uuid = require('uuid');
+import {connect} from 'react-redux';
+import {getItems, deleteItem} from '../actions/itemActions';
+import PropTypes from 'prop-types';
+
+
 
 class CoursesList extends Component{
-    state = {
-        items:[
-            {id: uuidv4(), name: 'CSI'},
-            {id: uuidv4(), name: 'SEG'},
-            {id: uuidv4(), name: 'GNG'},
-            {id: uuidv4(), name: 'MAT'}
-        ]
+
+    componentDidMount(){
+        this.props.getItems();
+    }
+
+    onDeleteClick = id => {
+        this.props.deleteItem(id);
     }
 
     render(){
-        const { items } = this.state;
+        const { items } = this.props.item;
         return(
             <Container>
-                <button 
-                className="main-btn"
-                style={{marginBottom: '2rem'}}
-                onClick={() => {
-                    const name = prompt('Enter Course');
-                    if (name){
-                        this.setState(state => ({
-                            items: [...state.items, { id: uuidv4(), name}]
-                        }));
-                    }
-                }
-                }
-                >
-                Add Course
-                </button>
-
                 <ListGroup>
                     <TransitionGroup className="Courses-List">
                         {items.map(({id, name}) => (
@@ -44,11 +30,7 @@ class CoursesList extends Component{
                                     className="remove-btn"
                                     color="danger"
                                     size="sm"
-                                    onClick= {() => {
-                                        this.setState(state => ({
-                                            items: state.items.filter(item => item.id !== id)
-                                        }));
-                                    }}
+                                    onClick= {this.onDeleteClick.bind(this, id)}
                                     > &times;</Button>
                                     {name}
                                 </ListGroupItem>
@@ -62,5 +44,13 @@ class CoursesList extends Component{
     }
 }
 
+CoursesList.propTypes = {
+    getItems: PropTypes.func.isRequired,
+    item: PropTypes.object.isRequired
+}
 
-export default CoursesList;
+const mapStateToProps = (state) => ({
+    item: state.item
+});
+
+export default connect (mapStateToProps, { getItems, deleteItem}) (CoursesList);
